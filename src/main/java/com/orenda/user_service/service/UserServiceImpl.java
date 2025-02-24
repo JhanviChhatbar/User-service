@@ -57,6 +57,27 @@ public class UserServiceImpl implements UserService{
         return user;
     }
 
+    @Override
+    @Transactional
+    public void activateAccount(String token) {
+        User user = userRepository.findByActivationToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired activation token"));
+
+        if(user.getActivationTokenExpiry().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("Activation token is expired");
+        }
+
+        if(user.isEnabled()){
+            throw new IllegalArgumentException("Account is activated");
+        }
+
+        user.setEnabled(true);
+        user.setAccountActivatedAt(LocalDateTime.now());
+        user.setActivationToken(null); //invalidate token
+        user.setActivationTokenExpiry(null);
+        userRepository.save(user);
+    }
+
 //    public LoginResponseDTO loginUser(LoginRequestDTO loginRequestDTO){
 //        User user = userRepository.findByEmail(loginRequestDTO.getEmail())
 //                .orElseThrow(() -> new RuntimeException("User Not found!"));
