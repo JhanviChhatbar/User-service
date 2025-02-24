@@ -8,6 +8,7 @@ public interface UserService {
     User registerUser(UserRegistrationRequest userRegistrationRequest);
     boolean existsUserName(String userName);
     boolean existsEmail(String email);
+    void activateAccount(String token);
 //    String loginUser(String userName, String password); // returns JWT token
 //    String refreshToken(String refreshTokenValue);
 

@@ -7,10 +7,7 @@ import com.orenda.user_service.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -26,5 +23,11 @@ public class UserController {
     public ResponseEntity<User> registerNewUser(@Valid @RequestBody UserRegistrationRequest userRegistrationRequest){
         User registeredUser = userService.registerUser(userRegistrationRequest);
         return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/activate")
+    public ResponseEntity<String> activateUserAccount(@RequestParam String token){
+        userService.activateAccount(token);
+        return ResponseEntity.ok("Account activated successfully! You can now login.");
     }
 }
