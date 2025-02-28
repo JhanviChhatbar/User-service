@@ -1,31 +1,31 @@
 package com.orenda.user_service.service;
 
-import com.orenda.user_service.dto.LoginRequestDTO;
-import com.orenda.user_service.dto.LoginResponseDTO;
+import com.orenda.user_service.config.JwtService;
 import com.orenda.user_service.dto.UserRegistrationRequest;
-import com.orenda.user_service.dto.ResetPasswordDTO;
 import com.orenda.user_service.entity.User;
 import com.orenda.user_service.repository.UserRepository;
 import com.orenda.user_service.util.JwtUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil){
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -76,6 +76,16 @@ public class UserServiceImpl implements UserService{
         user.setActivationToken(null); //invalidate token
         user.setActivationTokenExpiry(null);
         userRepository.save(user);
+    }
+
+    @Override
+    public String loginUser(String userName, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(()->new IllegalArgumentException("User not found!"));
+
+        //String jwtToken = jwtService.generateToken(user);
+        return null;
     }
 
 //    public LoginResponseDTO loginUser(LoginRequestDTO loginRequestDTO){

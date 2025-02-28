@@ -9,7 +9,7 @@ public interface UserService {
     boolean existsUserName(String userName);
     boolean existsEmail(String email);
     void activateAccount(String token);
-//    String loginUser(String userName, String password); // returns JWT token
+    String loginUser(String userName, String password); // returns JWT token
 //    String refreshToken(String refreshTokenValue);
 
 }
