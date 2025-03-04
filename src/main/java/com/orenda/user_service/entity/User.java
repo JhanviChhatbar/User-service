@@ -45,7 +45,7 @@ public class User {
     private boolean accountNonLocked = true; // For account deactivation/admin disable
     private LocalDateTime accountDeactivatedAt;
 
-    private String resetToken;
+    private String refreshToken;
 
     private String firstName;
     private String lastName;
